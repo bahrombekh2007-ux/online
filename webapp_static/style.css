@@ -1,0 +1,293 @@
+:root {
+  --bg: #12151C;
+  --surface: #1B2029;
+  --surface-hi: #232935;
+  --border: #2A3140;
+  --text: #EDEFF4;
+  --text-dim: #8A93A6;
+  --text-faint: #5B6272;
+
+  --online: #4FD1AE;
+  --online-dim: #2E5A50;
+  --paused: #E8A33D;
+  --paused-dim: #5A4A2A;
+  --error: #E8556F;
+  --error-dim: #5A2E38;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  padding: 20px 16px 40px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-title h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.dot-live {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--online);
+  box-shadow: 0 0 0 0 rgba(79, 209, 174, 0.6);
+  animation: dot-pulse 2.2s ease-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes dot-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(79, 209, 174, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(79, 209, 174, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(79, 209, 174, 0); }
+}
+
+.topbar-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ---------- Stat cards ---------- */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 10.5px;
+  color: var(--text-dim);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-card[data-kind="online"] .stat-value { color: var(--online); }
+.stat-card[data-kind="paused"] .stat-value { color: var(--paused); }
+.stat-card[data-kind="error"] .stat-value { color: var(--error); }
+
+/* ---------- Section label ---------- */
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+/* ---------- Account cards ---------- */
+
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.account-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: card-in 0.35s ease backwards;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.account-pulse {
+  flex-shrink: 0;
+  width: 56px;
+  height: 32px;
+}
+
+.account-pulse svg { width: 100%; height: 100%; overflow: visible; }
+
+.pulse-line {
+  fill: none;
+  stroke-width: 1.6;
+}
+
+.pulse-line.status-faol {
+  stroke: var(--online);
+  stroke-dasharray: 220;
+  stroke-dashoffset: 0;
+  animation: pulse-travel 2.4s linear infinite;
+}
+
+.pulse-line.status-pauza {
+  stroke: var(--paused);
+  stroke-dasharray: 3 4;
+}
+
+.pulse-line.status-xatolik {
+  stroke: var(--error);
+}
+
+@keyframes pulse-travel {
+  from { stroke-dashoffset: 220; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.account-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-name {
+  font-weight: 600;
+  font-size: 14.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-phone {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.account-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.tag {
+  font-size: 10.5px;
+  padding: 2.5px 7px;
+  border-radius: 6px;
+  background: var(--surface-hi);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.tag.on { color: var(--online); border-color: var(--online-dim); }
+
+.account-status {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-badge.status-faol {
+  color: var(--online);
+  background: rgba(79, 209, 174, 0.12);
+}
+
+.status-badge.status-pauza {
+  color: var(--paused);
+  background: rgba(232, 163, 61, 0.12);
+}
+
+.status-badge.status-xatolik {
+  color: var(--error);
+  background: rgba(232, 85, 111, 0.12);
+}
+
+.account-last {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-faint);
+  margin-top: 6px;
+}
+
+/* ---------- Empty / error states ---------- */
+
+.empty-state, .error-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+
+.empty-glyph {
+  font-size: 34px;
+  color: var(--text-faint);
+  margin-bottom: 10px;
+}
+
+.empty-hint {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+
+.error-state p:first-child { color: var(--error); font-weight: 600; }
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dot-live, .pulse-line.status-faol, .account-card {
+    animation: none !important;
+  }
+}

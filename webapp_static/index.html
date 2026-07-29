@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Online Keeper — Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">
+    <span class="dot-live"></span>
+    <h1>Online Keeper</h1>
+  </div>
+  <div class="topbar-sub" id="lastUpdated">yangilanmoqda…</div>
+</div>
+
+<div class="stats-row" id="statsRow">
+  <div class="stat-card" data-kind="total">
+    <div class="stat-value" id="statTotal">—</div>
+    <div class="stat-label">Jami akkaunt</div>
+  </div>
+  <div class="stat-card" data-kind="online">
+    <div class="stat-value" id="statOnline">—</div>
+    <div class="stat-label">Onlayn</div>
+  </div>
+  <div class="stat-card" data-kind="paused">
+    <div class="stat-value" id="statPaused">—</div>
+    <div class="stat-label">Pauzada</div>
+  </div>
+  <div class="stat-card" data-kind="error">
+    <div class="stat-value" id="statError">—</div>
+    <div class="stat-label">Xatolik</div>
+  </div>
+</div>
+
+<div class="section-label">Akkauntlar</div>
+
+<div class="accounts-list" id="accountsList">
+  <!-- JS orqali to'ldiriladi -->
+</div>
+
+<div class="empty-state" id="emptyState" hidden>
+  <div class="empty-glyph">◌</div>
+  <p>Hozircha ulangan akkaunt yo'q.</p>
+  <p class="empty-hint">Botga qaytib, "➕ Akkaunt qo'shish" orqali birinchi akkauntingizni ulang.</p>
+</div>
+
+<div class="error-state" id="errorState" hidden>
+  <p>Ma'lumotlarni yuklab bo'lmadi.</p>
+  <p class="empty-hint" id="errorHint">Iltimos, panelni botdagi tugma orqali qayta oching.</p>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

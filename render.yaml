@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: telegram-online-keeper
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: keeper-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: WEBAPP_URL
+        sync: false
+      - key: DB_PATH
+        value: /app/data/data.db
+      - key: BASE_INTERVAL
+        value: "50"
+      - key: JITTER
+        value: "15"

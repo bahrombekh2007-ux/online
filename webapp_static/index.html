@@ -47,12 +47,101 @@
 <div class="empty-state" id="emptyState" hidden>
   <div class="empty-glyph">◌</div>
   <p>Hozircha ulangan akkaunt yo'q.</p>
-  <p class="empty-hint">Botga qaytib, "➕ Akkaunt qo'shish" orqali birinchi akkauntingizni ulang.</p>
+  <p class="empty-hint">Pastdagi "+" tugmasi orqali birinchi akkauntingizni ulang.</p>
 </div>
 
 <div class="error-state" id="errorState" hidden>
   <p>Ma'lumotlarni yuklab bo'lmadi.</p>
   <p class="empty-hint" id="errorHint">Iltimos, panelni botdagi tugma orqali qayta oching.</p>
+</div>
+
+<button class="fab" id="fabAdd" aria-label="Akkaunt qo'shish">+</button>
+
+<!-- Akkaunt qo'shish oynasi -->
+<div class="sheet-backdrop" id="sheetBackdrop" hidden>
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" id="sheetTitle">Akkaunt qo'shish</span>
+      <button class="sheet-close" id="sheetClose" aria-label="Yopish">✕</button>
+    </div>
+
+    <div class="sheet-body">
+      <div class="sheet-step" id="stepPhone">
+        <p class="sheet-hint">Telefon raqamni xalqaro formatda kiriting.</p>
+        <input class="sheet-input" id="inputPhone" type="tel" placeholder="+998901234567" inputmode="tel">
+        <button class="sheet-btn" id="btnSendPhone">Kod yuborish</button>
+      </div>
+
+      <div class="sheet-step" id="stepCode" hidden>
+        <p class="sheet-hint">Telegram yuborgan kodni kiriting.</p>
+        <input class="sheet-input" id="inputCode" type="text" placeholder="12345" inputmode="numeric">
+        <button class="sheet-btn" id="btnSendCode">Tasdiqlash</button>
+      </div>
+
+      <div class="sheet-step" id="stepPassword" hidden>
+        <p class="sheet-hint">Ikki bosqichli tekshiruv (2FA) parolini kiriting.</p>
+        <input class="sheet-input" id="inputPassword" type="password" placeholder="Parol">
+        <button class="sheet-btn" id="btnSendPassword">Tasdiqlash</button>
+      </div>
+
+      <div class="sheet-step" id="stepName" hidden>
+        <p class="sheet-hint">Akkaunt uchun nom bering (masalan: "Ishchi akkaunt").</p>
+        <input class="sheet-input" id="inputName" type="text" placeholder="Akkaunt nomi">
+        <button class="sheet-btn" id="btnFinish">Saqlash</button>
+      </div>
+
+      <div class="sheet-step" id="stepSuccess" hidden>
+        <div class="sheet-success">✅</div>
+        <p class="sheet-hint">Akkaunt muvaffaqiyatli ulandi va 24/7 onlayn rejimga o'tkazildi!</p>
+        <button class="sheet-btn" id="btnDone">Tayyor</button>
+      </div>
+
+      <div class="sheet-step" id="stepDetail" hidden>
+        <div class="detail-head">
+          <div class="account-pulse" id="detailPulse"></div>
+          <div>
+            <div class="detail-name" id="detailName">—</div>
+            <div class="detail-phone" id="detailPhone">—</div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <span>Holat</span>
+          <span class="status-badge" id="detailStatusBadge">—</span>
+        </div>
+        <div class="detail-row">
+          <span>Oxirgi faollik</span>
+          <span id="detailLastOnline">—</span>
+        </div>
+
+        <button class="sheet-btn secondary" id="btnToggleStatus">⏸ Pauza qilish</button>
+
+        <div class="detail-toggle-row">
+          <span>🌙 Kunduz/kecha rejimi</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleSchedule">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+        <div class="schedule-hours" id="scheduleHours" hidden>
+          <input type="number" id="scheduleStart" min="0" max="23" value="8"> :00 —
+          <input type="number" id="scheduleEnd" min="1" max="24" value="24"> :00
+        </div>
+
+        <div class="detail-toggle-row">
+          <span>👁 Xabarlarni auto-o'qish</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleAutoread">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <button class="sheet-btn danger" id="btnDeleteAccount">🗑 Akkauntni o'chirish</button>
+      </div>
+
+      <p class="sheet-error" id="sheetError" hidden></p>
+    </div>
+  </div>
 </div>
 
 <script src="app.js"></script>

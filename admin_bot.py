@@ -18,17 +18,13 @@ from telethon.errors import (
 )
 
 import database as db
-from config import ADMIN_IDS, API_ID, API_HASH, WEBAPP_URL
+from config import API_ID, API_HASH, WEBAPP_URL
 
 logger = logging.getLogger("admin_bot")
 router = Router()
 
 # keeper_manager va bot obyektlari main.py da inject qilinadi
 keeper_manager = None
-
-
-def is_admin(user_id: int) -> bool:
-    return not ADMIN_IDS or user_id in ADMIN_IDS
 
 
 class AddAccount(StatesGroup):
@@ -79,18 +75,24 @@ def back_kb():
 STATUS_EMOJI = {"faol": "🟢", "pauza": "⏸", "xatolik": "🔴"}
 
 
+async def _get_owned_account(account_id: int, user_id: int):
+    """Akkauntni faqat shu foydalanuvchiga tegishli bo'lsagina qaytaradi."""
+    account = await db.get_account(account_id)
+    if not account or account["owner_id"] != user_id:
+        return None
+    return account
+
+
 # ---------- Umumiy komandalar ----------
 
 @router.message(Command("start"))
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
-    if not is_admin(message.from_user.id):
-        await message.answer("⛔️ Sizda ushbu botdan foydalanishga ruxsat yo'q.")
-        return
     await message.answer(
         "👋 <b>Telegram Online Keeper</b> boshqaruv paneliga xush kelibsiz!\n\n"
         "Bu bot orqali Telegram akkauntlaringizni 24/7 onlayn holatda ushlab turishingiz, "
-        "kunduz/kecha rejimini sozlashingiz va xabarlarni avtomatik o'qilgan qilib belgilashingiz mumkin.",
+        "kunduz/kecha rejimini sozlashingiz va xabarlarni avtomatik o'qilgan qilib belgilashingiz mumkin.\n\n"
+        "🖥 Akkaunt qo'shish va boshqarishning eng qulay yo'li — pastdagi <b>Web panel</b>.",
         reply_markup=main_menu_kb(),
         parse_mode="HTML",
     )
@@ -228,7 +230,7 @@ async def process_name(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == "list_accounts")
 async def cb_list_accounts(call: CallbackQuery):
-    accounts = await db.get_accounts(call.from_user.id if ADMIN_IDS else None)
+    accounts = await db.get_accounts(call.from_user.id)
     if not accounts:
         await call.message.edit_text(
             "📭 Hozircha hech qanday akkaunt qo'shilmagan.", reply_markup=main_menu_kb()
@@ -249,7 +251,7 @@ async def cb_list_accounts(call: CallbackQuery):
 @router.callback_query(F.data.startswith("view_"))
 async def cb_view_account(call: CallbackQuery):
     account_id = int(call.data.split("_")[1])
-    account = await db.get_account(account_id)
+    account = await _get_owned_account(account_id, call.from_user.id)
     if not account:
         await call.answer("Topilmadi", show_alert=True)
         return
@@ -274,6 +276,9 @@ async def cb_view_account(call: CallbackQuery):
 @router.callback_query(F.data.startswith("pause_"))
 async def cb_pause(call: CallbackQuery):
     account_id = int(call.data.split("_")[1])
+    if not await _get_owned_account(account_id, call.from_user.id):
+        await call.answer("Topilmadi", show_alert=True)
+        return
     await db.set_status(account_id, "pauza")
     await keeper_manager.stop_account(account_id)
     await call.answer("⏸ Pauza qilindi")
@@ -283,6 +288,9 @@ async def cb_pause(call: CallbackQuery):
 @router.callback_query(F.data.startswith("resume_"))
 async def cb_resume(call: CallbackQuery):
     account_id = int(call.data.split("_")[1])
+    if not await _get_owned_account(account_id, call.from_user.id):
+        await call.answer("Topilmadi", show_alert=True)
+        return
     await db.set_status(account_id, "faol")
     keeper_manager.start_account(account_id)
     await call.answer("▶️ Davom ettirildi")
@@ -292,7 +300,10 @@ async def cb_resume(call: CallbackQuery):
 @router.callback_query(F.data.startswith("autoread_"))
 async def cb_autoread(call: CallbackQuery):
     account_id = int(call.data.split("_")[1])
-    account = await db.get_account(account_id)
+    account = await _get_owned_account(account_id, call.from_user.id)
+    if not account:
+        await call.answer("Topilmadi", show_alert=True)
+        return
     new_val = not account["auto_read"]
     await db.set_auto_read(account_id, new_val)
     await keeper_manager.restart_account(account_id)
@@ -303,7 +314,10 @@ async def cb_autoread(call: CallbackQuery):
 @router.callback_query(F.data.startswith("schedule_"))
 async def cb_schedule(call: CallbackQuery):
     account_id = int(call.data.split("_")[1])
-    account = await db.get_account(account_id)
+    account = await _get_owned_account(account_id, call.from_user.id)
+    if not account:
+        await call.answer("Topilmadi", show_alert=True)
+        return
     new_val = not account["schedule_enabled"]
     # standart: 08:00 - 24:00 oralig'ida onlayn
     await db.set_schedule(account_id, new_val, 8, 24)
@@ -315,6 +329,9 @@ async def cb_schedule(call: CallbackQuery):
 @router.callback_query(F.data.startswith("delete_"))
 async def cb_delete(call: CallbackQuery):
     account_id = int(call.data.split("_")[1])
+    if not await _get_owned_account(account_id, call.from_user.id):
+        await call.answer("Topilmadi", show_alert=True)
+        return
     await keeper_manager.stop_account(account_id)
     await db.delete_account(account_id)
     await call.answer("🗑 O'chirildi")
